@@ -4,5 +4,6 @@ Theoretically, the [ESP-01 I've bought](https://www.aliexpress.com/item/40001400
 
 I've kept both working configurations.
 
-https://www.reddit.com/r/pop_os/comments/uheuov/fix_usb_to_ttl_disconnection_issue/
-https://askubuntu.com/questions/1403705/dev-ttyusb0-not-present-in-ubuntu-22-04
+Oh – on Windows, install [CP210X](https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers) and [CH340X](https://github.com/justcallmekoko/ESP32Marauder/blob/master/Drivers/CH34x_Install_Windows_v3_4.EXE) drivers.<sup>[1](https://askubuntu.com/questions/1403705/dev-ttyusb0-not-present-in-ubuntu-22-04)</sup>
+
+And on Linux, [remove `brltty`](https://askubuntu.com/a/1417483) and/or [comment udev rules](https://askubuntu.com/a/1403754).<sup>[1](https://askubuntu.com/questions/1403705/dev-ttyusb0-not-present-in-ubuntu-22-04) [2](https://www.reddit.com/r/pop_os/comments/uheuov/fix_usb_to_ttl_disconnection_issue/)</sup>
