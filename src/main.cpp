@@ -1,21 +1,35 @@
 #include <Arduino.h>
+#include <LedControl.h>
 
-// the setup function runs once when you press reset or power the board
-void setup() {
-  // initialize digital pin LED_BUILTIN as an output.
-  pinMode(LED_BUILTIN, OUTPUT);
+int GPIO0 = 0;
+int GPIO1_TX = 1;
+int GPIO2 = 2;
+int GPIO3_RX = 3;
 
-  // set IO2 as input
-  // https://embarcados.com.br/configurando-gpio-do-esp8266-01/#GPIO0-e-GPIO2-como-Input
-  pinMode(0, OUTPUT);
-  digitalWrite(0, LOW);
+// All 4 pins can be used
+int DIN = GPIO0;
+int CS = GPIO1_TX;
+int CLK = GPIO3_RX;
+
+LedControl lc = LedControl(DIN, CLK, CS);
+
+void setup()
+{
+  pinMode(GPIO2, OUTPUT);
+  lc.shutdown(0, false);
+  lc.setIntensity(0, 7);
+  lc.clearDisplay(0);
 }
 
-int currentValue;
-
-// the loop function runs over and over again forever
-void loop() {
-  currentValue = digitalRead(0);
-  digitalWrite(LED_BUILTIN, currentValue);
-  delay(50);
+void loop()
+{
+  for (int j = 0; j < 8; j++)
+  {
+    for (int i = 0; i < 8; i++)
+    {
+      lc.setLed(0, j, i, true);
+      delay(100);
+      lc.setLed(0, j, i, false);
+    }
+  }
 }

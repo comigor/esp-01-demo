@@ -7,3 +7,8 @@ I've kept both working configurations.
 Oh – on Windows, install [CP210X](https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers) and [CH340X](https://github.com/justcallmekoko/ESP32Marauder/blob/master/Drivers/CH34x_Install_Windows_v3_4.EXE) drivers.<sup>[1](https://askubuntu.com/questions/1403705/dev-ttyusb0-not-present-in-ubuntu-22-04)</sup>
 
 And on Linux, [remove `brltty`](https://askubuntu.com/a/1417483) and/or [comment udev rules](https://askubuntu.com/a/1403754).<sup>[1](https://askubuntu.com/questions/1403705/dev-ttyusb0-not-present-in-ubuntu-22-04) [2](https://www.reddit.com/r/pop_os/comments/uheuov/fix_usb_to_ttl_disconnection_issue/)</sup>
+
+## Resources
+- https://create.arduino.cc/projecthub/mdraber/controlling-8x8-dot-matrix-with-max7219-and-arduino-7314a7
+- http://www.forward.com.au/pfod/ESP8266/GPIOpins/ESP8266_01_pin_magic.html#TX_RX_normal
+- https://www.hackster.io/news/expanding-the-esp-01-s-capabilities-to-build-an-led-matrix-041b89a175fc
