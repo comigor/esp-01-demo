@@ -1,0 +1,131 @@
+#define GPIO0 0    // purple
+#define GPIO2 2    // green
+#define GPIO1_TX 1 // blue
+#define GPIO3_RX 3 // yellow
+
+#include <Arduino.h>
+
+// #define SDA GPIO2
+// #define SCL GPIO0
+
+#include <SPI.h>
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+#include <ESP8266WiFi.h>
+
+#include "testdraw.h"
+
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGHT 64
+
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
+
+void setup()
+{
+    Serial.begin(9600);
+    Serial.println(F("\n"));
+
+    // --- LCD SCREEN
+
+    Serial.println(F("Starting Wire(sda=2, scl=0)"));
+    Wire.begin(2, 0);
+
+    Serial.println(F("Allocating display"));
+
+    Serial.println(F("Begin display"));
+    int displaySuccess = display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+    Serial.print(F("displaySuccess: "));
+    Serial.println(displaySuccess);
+
+    display.display();
+
+    // ---
+
+    display.clearDisplay();
+    display.setTextSize(1);
+    // display.setTextColor(SSD1306_WHITE, SSD1306_BLACK);
+    display.setTextColor(SSD1306_WHITE);
+    display.setCursor(0, 0);
+
+    // --- WIFI
+
+    Serial.println(F("Setting WIFI_STA"));
+    WiFi.mode(WIFI_STA);
+    Serial.print(F("Connecting: "));
+    auto status = WiFi.begin("AthenaTurbo", "branquelasamoieda");
+    Serial.println(String(status));
+
+    while (WiFi.status() != WL_CONNECTED)
+    {
+        delay(500);
+        Serial.print(F("."));
+    }
+
+    Serial.println(F("WiFi connected"));
+    Serial.print(F("IP address: "));
+    Serial.println(WiFi.localIP().toString());
+
+    // ---
+
+    display.println(WiFi.localIP().toString());
+    display.display();
+}
+
+String getPhrase()
+{
+    Serial.println("connecting to djxmmx.net:17");
+
+    // Use WiFiClient class to create TCP connections
+    WiFiClient client;
+    if (!client.connect("djxmmx.net", 17))
+    {
+        Serial.println("connection failed");
+        delay(5000);
+        return "";
+    }
+
+    // This will send a string to the server
+    Serial.println("sending data to server");
+    if (client.connected())
+    {
+        client.println("hello from ESP8266");
+    }
+
+    // wait for data to be available
+    unsigned long timeout = millis();
+    while (client.available() == 0)
+    {
+        if (millis() - timeout > 5000)
+        {
+            Serial.println(">>> Client Timeout !");
+            client.stop();
+            delay(60000);
+            return "";
+        }
+    }
+
+    // Read all the lines of the reply from server and print them to Serial
+    Serial.println("receiving from remote server");
+    // not testing 'client.connected()' since we do not need to send data here
+    String resp = client.readStringUntil('\r');
+
+    // Close the connection
+    Serial.println();
+    Serial.println("closing connection");
+    client.stop();
+
+    return resp;
+}
+
+void loop()
+{
+    delay(10000);
+
+    String phrase = getPhrase();
+    // display.clearDisplay();
+    display.fillRect(0, 10, SCREEN_WIDTH, SCREEN_HEIGHT, SSD1306_BLACK);
+    display.setCursor(0, 10);
+    display.println(phrase);
+    display.display();
+}

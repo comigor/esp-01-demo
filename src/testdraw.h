@@ -16,5 +16,6 @@ void testdrawchar(Adafruit_SSD1306 display);
 void testdrawstyles(Adafruit_SSD1306 display);
 void testscrolltext(Adafruit_SSD1306 display, char *text);
 void testdrawbitmap(Adafruit_SSD1306 display);
+void infiniteScrollText(Adafruit_SSD1306 display, char *text);
 
 #endif

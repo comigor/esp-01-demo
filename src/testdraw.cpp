@@ -303,3 +303,18 @@ void testdrawbitmap(Adafruit_SSD1306 display)
     display.display();
     delay(1000);
 }
+
+void infiniteScrollText(Adafruit_SSD1306 display, char *text)
+{
+    display.clearDisplay();
+
+    display.setTextSize(2); // Draw 2X-scale text
+    display.setTextColor(SSD1306_WHITE);
+    display.setCursor(0, 0);
+    display.println(text);
+    display.display(); // Show initial text
+    delay(100);
+
+    display.startscrollright(0x00, 0x0F);
+    delay(500000);
+}

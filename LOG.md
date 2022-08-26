@@ -48,6 +48,12 @@ I2C = IO2?
 
 it works! kinda... it's crashing
 
+not sure why, but was able to circunvet while delaying code
+now ssd1306 works
+now wifi works
+now both works
+https://arduinojson.org/v6/assistant/#/step1
+
 ### General learnings
 * having GPIO2 connected to LED while flashing avoids flashing
 * having GPIO2 connected while RST make setup goes bonkers

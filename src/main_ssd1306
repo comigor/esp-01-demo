@@ -1,0 +1,51 @@
+#define GPIO0 0    // purple
+#define GPIO2 2    // green
+#define GPIO1_TX 1 // blue
+#define GPIO3_RX 3 // yellow
+
+#include <Arduino.h>
+
+// #define SDA GPIO2
+// #define SCL GPIO0
+
+#include <SPI.h>
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+
+#include "testdraw.h"
+
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGHT 64
+
+void setup()
+{
+  Serial.begin(9600);
+  Serial.println(F("\n"));
+
+  Serial.println(F("Starting Wire(sda=2, scl=0)"));
+  Wire.begin(2, 0);
+
+  Serial.println(F("Allocating display"));
+  Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
+
+  Serial.println(F("Begin display"));
+  int displaySuccess = display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+  Serial.print(F("displaySuccess: "));
+  Serial.println(displaySuccess);
+
+  display.display();
+
+  display.clearDisplay();
+  display.setTextSize(2);
+  display.setTextColor(SSD1306_WHITE);
+  display.setCursor(0, 0);
+  display.println("igor igor igor igor");
+  display.display(); // Show initial text
+}
+
+void loop()
+{
+  Serial.print(F("."));
+  delay(1000);
+}
