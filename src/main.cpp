@@ -82,14 +82,21 @@ void drawNubankLogo(Adafruit_SSD1306 *display, int16_t x, int16_t y)
     display->drawBitmap(x, y, NUBANK_LOGO, LOGO_WIDTH, LOGO_HEIGHT, SSD1306_WHITE);
 }
 
-String getStockPrice()
+void updateStockPrice()
 {
     StaticJsonDocument<80> filter;
     filter["chart"]["result"][0]["meta"]["regularMarketPrice"] = true;
 
     JsonDocument *resp = jsonGET("https://query1.finance.yahoo.com/v8/finance/chart/NU?range=1d&interval=1d", &filter);
 
-    return (*resp)["chart"]["result"][0]["meta"]["regularMarketPrice"];
+    String newStockPrice = (*resp)["chart"]["result"][0]["meta"]["regularMarketPrice"];
+    d("Stock: ");
+    dln(newStockPrice);
+
+    if (newStockPrice != "null")
+    {
+        stockPrice = newStockPrice;
+    }
 }
 
 void loop()
@@ -103,13 +110,8 @@ void loop()
     dln("Drawing Nubank logo");
     drawNubankLogo(display, 6, 12);
 
-    String newStockPrice = getStockPrice();
-    d("Stock: ");
-    dln(newStockPrice);
-    if (!newStockPrice.isEmpty())
-    {
-        stockPrice = newStockPrice;
-    }
+    dln("Updating stock price");
+    updateStockPrice();
 
     dln("Drawing amount");
     display->setCursor(52, 2 * 8);
