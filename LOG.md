@@ -54,6 +54,9 @@ now wifi works
 now both works
 https://arduinojson.org/v6/assistant/#/step1
 
+display has 168 characters (21x8 chars each screen) (6x8 pixels each char)
+http://oleddisplay.squix.ch/#/home
+
 ### General learnings
 * having GPIO2 connected to LED while flashing avoids flashing
 * having GPIO2 connected while RST make setup goes bonkers
