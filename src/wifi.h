@@ -2,8 +2,10 @@
 #define WIFI_H
 
 #include <ArduinoJson.h>
-
-String setupWifi();
-JsonDocument *jsonGET(String url, JsonDocument *filter);
-
+extern "C"
+{
+    String setupWifi();
+    void sleepWifi();
+    JsonDocument *jsonGET(String url, JsonDocument *filter);
+}
 #endif

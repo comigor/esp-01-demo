@@ -4,20 +4,35 @@
 #include <ESP8266WiFi.h>
 
 #include "config.h"
-#include "debug.cpp"
 #include "secrets.h"
-#include "terminal_display.hpp"
+#include "terminal_display.h"
 #include "wifi.h"
 
 BearSSL::WiFiClientSecure *_client = nullptr;
 HTTPClient *_https = new HTTPClient();
+IPAddress _ip(192, 168, 10, 140);
+IPAddress _gateway(192, 168, 10, 1);
+IPAddress _subnet(255, 255, 255, 0);
 
 String setupWifi()
 {
-    td(":: WiFI\n");
-    td("Setting WIFI_STA mode\n");
+    tdln(":: WiFI");
+
+    tdln("Wake from sleep");
+    WiFi.forceSleepWake();
+    delay(1);
+
+    tdln("Disable persistence");
+    WiFi.persistent(false);
+
+    // td("Using fixed ip: ");
+    // td(_ip.toString(), false);
+    // td("\n", false)
+    // WiFi.config(_ip, _gateway, _subnet);
+
+    tdln("Setting WIFI_STA mode");
     WiFi.mode(WIFI_STA);
-    td("Set!\n");
+    tdln("Set!");
 
     td("Connecting");
     WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
@@ -25,35 +40,46 @@ String setupWifi()
     while (WiFi.status() != WL_CONNECTED)
     {
         delay(500);
-        td(".");
+        td(".", false);
     }
-    td("\n");
+    td("\n", false);
     td("Connected! (IP: ");
-    td(WiFi.localIP().toString());
-    td(")\n");
+    td(WiFi.localIP().toString(), false);
+    td(")\n", false);
 
-    td("Creating client\n");
+    tdln("Creating client");
     _client = new BearSSL::WiFiClientSecure();
     _client->setInsecure();
-    td("Created!\n");
+    tdln("Created!");
 
     return WiFi.localIP().toString();
+}
+
+void sleepWifi()
+{
+    WiFi.disconnect(true);
+    delay(1);
+
+    WiFi.mode(WIFI_OFF);
+    delay(5);
 }
 
 JsonDocument *jsonGET(String url, JsonDocument *filter = nullptr)
 {
     if (_client && _https->begin(*_client, url))
     {
-        d("[HTTPS] GET ");
-        dln(url);
+        td("[HTTPS] GET ");
+        td(url, false);
+        td("\n", false);
 
         // start connection and send HTTP header
         int httpCode = _https->GET();
 
         if (httpCode > 0)
         {
-            d("[HTTPS] GET response, code: ");
-            dln(httpCode);
+            td("[HTTPS] GET response, code: ");
+            td(httpCode, false);
+            td("\n", false);
 
             if (httpCode == HTTP_CODE_OK)
             {
@@ -71,8 +97,8 @@ JsonDocument *jsonGET(String url, JsonDocument *filter = nullptr)
 
                 if (error)
                 {
-                    d(F("deserializeJson() failed: "));
-                    dln(error.f_str());
+                    td("deserializeJson() failed: ");
+                    tdln(error.f_str(), false);
                     return nullptr;
                 }
 
@@ -81,14 +107,14 @@ JsonDocument *jsonGET(String url, JsonDocument *filter = nullptr)
         }
         else
         {
-            d("[HTTPS] GET failed, error: ");
-            dln(_https->errorToString(httpCode).c_str());
+            td("[HTTPS] GET failed, error: ");
+            tdln(_https->errorToString(httpCode).c_str(), false);
         }
         _https->end();
     }
     else
     {
-        dln("[HTTPS] Unable to connect");
+        tdln("[HTTPS] Unable to connect");
     }
 
     return nullptr;

@@ -63,6 +63,26 @@ http://oleddisplay.squix.ch/#/home
 * RST is LOW when button is pressed
 * RST is 0V < RST < 3.3V when ESP is on
 
+### Battery
+https://diyi0t.com/how-to-reduce-the-esp8266-power-consumption/
+https://www.instructables.com/ESP8266-Pro-Tips/
+https://www.sparkfun.com/quiz/9
+
+https://www.aliexpress.com/item/1005004277584923.html / https://www.aliexpress.com/item/32965642901.html
+https://www.youtube.com/watch?v=qLUQw4uVg1s
+
+https://www.aliexpress.com/store/912663838/search/1.html?spm=a2g0o.store_pc_allProduct.8148361.2.20a15bdf6Tdw5S&SearchText=lipo&origin=n&PPValue=557-201447542&SortType=bestmatch_sort
+
+### Power consumption
+https://diyi0t.com/how-to-reduce-the-esp8266-power-consumption/
+https://www.instructables.com/ESP8266-Pro-Tips/
+https://bitbanksoftware.blogspot.com/2019/06/how-much-current-do-oled-displays-use.html
+https://forums.adafruit.com/viewtopic.php?t=38569
+
+### Finishing
+https://www.youtube.com/watch?v=0Mu2L9z1MH8
+https://produto.mercadolivre.com.br/MLB-811753644-10x-placa-de-fenolite-ilhada-5x7-cm-pcb-perfurada-prototipo-_JM
+
 ---
 
 ### References
