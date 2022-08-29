@@ -18,10 +18,32 @@ void _dealWithTerminalScroll(T text, bool newline)
     {
         int16_t x = display->getCursorX();
         int16_t y = display->getCursorY();
-        display->ssd1306_command(SSD1306_SETSTARTLINE | ((y + FONT_HEIGHT) % SCREEN_HEIGHT));
+        display->print(text);
+        int16_t after_y = display->getCursorY();
+
+        display->ssd1306_command(SSD1306_SETSTARTLINE | ((after_y + FONT_HEIGHT) % SCREEN_HEIGHT));
+
+        // Won't work (missing overloads), so doing by myself
+        // display->getTextBounds(text, x, y, x1, y1, w, h);
+        int16_t x1 = after_y > y ? 0 : x;
+        int16_t h = after_y - y + FONT_HEIGHT;
+
         display->fillRect(x, y % SCREEN_HEIGHT, SCREEN_WIDTH - x, FONT_HEIGHT, SSD1306_BLACK);
+        if (after_y > y)
+        {
+            display->fillRect(x1, after_y % SCREEN_HEIGHT, SCREEN_WIDTH - x1, h - FONT_HEIGHT, SSD1306_BLACK);
+        }
+
         display->setCursor(x, y % SCREEN_HEIGHT);
         display->print(text);
+
+        bool edgeCase = (y % SCREEN_HEIGHT) == y && (after_y % SCREEN_HEIGHT) < after_y;
+        if (edgeCase)
+        {
+            display->setCursor(x, (after_y % SCREEN_HEIGHT) - (after_y - y));
+            display->print(text);
+        }
+
         if (newline)
         {
             display->print("\n");

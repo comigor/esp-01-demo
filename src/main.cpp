@@ -22,7 +22,6 @@ String stockPrice = "?.??";
 
 void setupClock()
 {
-    tdln(":: Clock");
     configTime(-3 * 3600, 0, "pool.ntp.org", "time.nist.gov");
 
     td("Syncing");
@@ -42,15 +41,18 @@ void setup()
     Serial.begin(9600);
     tdln("");
 #endif
+    tdln(":: LCD");
     display = setupLCD();
+    // After LCD or else it will crash (`tdln` writes to display as well)
     booting = true;
 
-    tdln(":: Setup");
-    tdln("Loading...");
-
+    tdln(":: WiFi");
     ip = setupWifi();
+
+    tdln(":: Clock");
     setupClock();
-    tdln("Loaded!");
+
+    tdln("All done!");
 
     booting = false;
 
@@ -103,9 +105,6 @@ void updateStockPrice()
 
 void loop()
 {
-    tdln("Setupping WiFi");
-    ip = setupWifi();
-
     tdln("Clearing display");
     display->fillScreen(SSD1306_BLACK);
 
@@ -114,6 +113,9 @@ void loop()
 
     tdln("Drawing Nubank logo");
     drawNubankLogo(display, 6, 12);
+
+    tdln("Re-starting WiFi");
+    ip = setupWifi();
 
     tdln("Updating stock price");
     updateStockPrice();

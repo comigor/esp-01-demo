@@ -16,13 +16,16 @@ IPAddress _subnet(255, 255, 255, 0);
 
 String setupWifi()
 {
-    tdln(":: WiFI");
+    if (WiFi.status() == WL_CONNECTED)
+    {
+        return WiFi.localIP().toString();
+    }
 
-    tdln("Wake from sleep");
+    tdln("Waking up from sleep");
     WiFi.forceSleepWake();
     delay(1);
 
-    tdln("Disable persistence");
+    tdln("Disabling persistence");
     WiFi.persistent(false);
 
     // td("Using fixed ip: ");
@@ -32,7 +35,6 @@ String setupWifi()
 
     tdln("Setting WIFI_STA mode");
     WiFi.mode(WIFI_STA);
-    tdln("Set!");
 
     td("Connecting");
     WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
@@ -50,7 +52,6 @@ String setupWifi()
     tdln("Creating client");
     _client = new BearSSL::WiFiClientSecure();
     _client->setInsecure();
-    tdln("Created!");
 
     return WiFi.localIP().toString();
 }

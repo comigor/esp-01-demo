@@ -27,7 +27,7 @@ Adafruit_SSD1306 *setupLCD()
     tdln("Allocating display");
     Adafruit_SSD1306 *localDisplay = new Adafruit_SSD1306(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
-    td("Begin display: ");
+    td("Starting display: ");
     int displaySuccess = localDisplay->begin(SSD1306_SWITCHCAPVCC, 0x3C);
     td(displaySuccess, false);
     td("\n", false);
