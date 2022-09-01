@@ -62,6 +62,10 @@ http://oleddisplay.squix.ch/#/home
 * having GPIO2 connected while RST make setup goes bonkers
 * RST is LOW when button is pressed
 * RST is 0V < RST < 3.3V when ESP is on
+* when using RX as output, flashing doesn't work (see warning on second link)
+
+https://forum.arduino.cc/t/using-esp-01-rx-and-tx-pins-as-additional-gpio-pins/629910
+http://www.forward.com.au/pfod/ESP8266/GPIOpins/ESP8266_01_pin_magic.html#TX_RX_normal
 
 ### Battery
 https://diyi0t.com/how-to-reduce-the-esp8266-power-consumption/
@@ -78,6 +82,13 @@ https://diyi0t.com/how-to-reduce-the-esp8266-power-consumption/
 https://www.instructables.com/ESP8266-Pro-Tips/
 https://bitbanksoftware.blogspot.com/2019/06/how-much-current-do-oled-displays-use.html
 https://forums.adafruit.com/viewtopic.php?t=38569
+
+ESP-01 doesn't have deep sleep (and I'm powerless to solder this thin)
+https://www.tech-spy.co.uk/2019/04/enable-deep-sleep-esp-01/
+
+https://www.reddit.com/r/esp8266/comments/nideat/low_power_techniques_for_esp01s_modded_for_deep/
+https://johnmu.com/quick-boot-button/
+https://www.bakke.online/index.php/2017/05/21/reducing-wifi-power-consumption-on-esp8266-part-1/
 
 ### Finishing
 https://www.youtube.com/watch?v=0Mu2L9z1MH8

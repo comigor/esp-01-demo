@@ -32,15 +32,21 @@ void setupClock()
     }
 
     td("\n", false);
-    tdln("Done!");
+    tdln("Synced!");
 }
 
 void setup()
 {
 #ifdef DEBUG
-    Serial.begin(9600);
+    Serial.begin(9600); //, SERIAL_8N1, SERIAL_TX_ONLY);
     tdln("");
 #endif
+    // tdln(":: Beep for fun");
+    // pinMode(GPIO3_RX, OUTPUT);
+    // tone(GPIO3_RX, 1000);
+    // delay(200);
+    // noTone(GPIO3_RX);
+
     tdln(":: LCD");
     display = setupLCD();
     // After LCD or else it will crash (`tdln` writes to display as well)
@@ -52,7 +58,7 @@ void setup()
     tdln(":: Clock");
     setupClock();
 
-    tdln("All done!");
+    tdln("All done!\n");
 
     booting = false;
 
@@ -131,10 +137,26 @@ void loop()
     display->print(stockPrice);
 
     tdln("Drawing bottom bar");
-    for (size_t i = 0; i < 120; i++)
-    {
-        drawBottomBar(display, ip);
-        display->display();
-        delay(1000);
-    }
+    drawBottomBar(display, ip);
+
+    tdln("Flushing LCD");
+    display->display();
+
+    // tdln("Deep sleeping");
+    // ESP.deepSleep(10 * 1000000L, WAKE_RF_DISABLED);
+
+    // display->fillRoundRect(0, 0, 64, 32, 6, SSD1306_WHITE);
+    // display->display();
+
+    // for (size_t i = 0; i < 120; i++)
+    // {
+    //     drawBottomBar(display, ip);
+    //     display->display();
+    //     delay(1000);
+    // }
+
+    tdln("Sleeping for 120s");
+    delay(120000);
+
+    tdln("");
 }
