@@ -10,9 +10,11 @@
 
 BearSSL::WiFiClientSecure *_client = nullptr;
 HTTPClient *_https = new HTTPClient();
-IPAddress _ip(192, 168, 10, 140);
+IPAddress _ip(192, 168, 10, 230);
 IPAddress _gateway(192, 168, 10, 1);
 IPAddress _subnet(255, 255, 255, 0);
+IPAddress _dns1(8, 8, 8, 8);
+IPAddress _dns2(8, 8, 4, 4);
 
 String setupWifi()
 {
@@ -28,10 +30,13 @@ String setupWifi()
     tdln("Disabling persistence");
     WiFi.persistent(false);
 
-    // td("Using fixed ip: ");
-    // td(_ip.toString(), false);
-    // td("\n", false)
-    // WiFi.config(_ip, _gateway, _subnet);
+    td("Using fixed ip: ");
+    td(_ip.toString(), false);
+    td("\n", false);
+    if (WiFi.config(_ip, _gateway, _subnet, _dns1, _dns2))
+    {
+        tdln("Success!");
+    }
 
     tdln("Setting WIFI_STA mode");
     WiFi.mode(WIFI_STA);

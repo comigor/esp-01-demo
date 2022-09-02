@@ -1,7 +1,7 @@
 #define GPIO0 0    // purple
 #define GPIO2 2    // green
 #define GPIO1_TX 1 // blue
-#define GPIO3_RX 3 // yellow
+#define GPIO3_RX 3 // yellow -- CANNOT be used for OUTPUT
 
 #include <Adafruit_SSD1306.h>
 #include <Arduino.h>
@@ -40,12 +40,13 @@ void setup()
 #ifdef DEBUG
     Serial.begin(9600); //, SERIAL_8N1, SERIAL_TX_ONLY);
     tdln("");
+#else
+    tdln(":: Beep for fun");
+    pinMode(GPIO1_TX, OUTPUT);
+    tone(GPIO1_TX, 1000);
+    delay(200);
+    noTone(GPIO1_TX);
 #endif
-    // tdln(":: Beep for fun");
-    // pinMode(GPIO3_RX, OUTPUT);
-    // tone(GPIO3_RX, 1000);
-    // delay(200);
-    // noTone(GPIO3_RX);
 
     tdln(":: LCD");
     display = setupLCD();
@@ -99,7 +100,14 @@ void updateStockPrice()
 
     if (newStockPrice != "null")
     {
-        stockPrice = newStockPrice;
+        double dd = newStockPrice.toDouble();
+
+        char buf[10] = {0};
+        sprintf(buf, "%0.3f", dd);
+#pragma GCC diagnostic ignored "-Wrestrict"
+        sprintf(buf, "%5.5s", buf);
+
+        stockPrice = buf;
     }
 }
 
@@ -112,7 +120,7 @@ void updateStockPrice()
 void loop()
 {
     tdln("Clearing display");
-    display->fillScreen(SSD1306_BLACK);
+    display->clearDisplay();
 
     tdln("Drawing borders");
     display->drawRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, SSD1306_WHITE);
@@ -144,16 +152,6 @@ void loop()
 
     // tdln("Deep sleeping");
     // ESP.deepSleep(10 * 1000000L, WAKE_RF_DISABLED);
-
-    // display->fillRoundRect(0, 0, 64, 32, 6, SSD1306_WHITE);
-    // display->display();
-
-    // for (size_t i = 0; i < 120; i++)
-    // {
-    //     drawBottomBar(display, ip);
-    //     display->display();
-    //     delay(1000);
-    // }
 
     tdln("Sleeping for 120s");
     delay(120000);

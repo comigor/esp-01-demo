@@ -67,6 +67,16 @@ http://oleddisplay.squix.ch/#/home
 https://forum.arduino.cc/t/using-esp-01-rx-and-tx-pins-as-additional-gpio-pins/629910
 http://www.forward.com.au/pfod/ESP8266/GPIOpins/ESP8266_01_pin_magic.html#TX_RX_normal
 
+oh no...
+
+https://arduino-esp8266.readthedocs.io/en/latest/faq/a02-my-esp-crashes.html#exception
+https://community.platformio.org/t/trying-to-install-platformio-into-vscode-but-it-cant-find-python-even-though-it-is-onboard/16372/28?page=2
+https://github.com/nodemcu/nodemcu-flasher
+
+```
+C:\Users\igor\.platformio\packages\toolchain-xtensa\bin\xtensa-lx106-elf-addr2line.exe -e .\.pio\build\debug\firmware.elf -fCsip -a 0x4025bbde
+```
+
 ### Battery
 https://diyi0t.com/how-to-reduce-the-esp8266-power-consumption/
 https://www.instructables.com/ESP8266-Pro-Tips/
