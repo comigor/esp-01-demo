@@ -6,6 +6,6 @@ extern "C"
 {
     String setupWifi();
     void sleepWifi();
-    JsonDocument *jsonGET(String url, JsonDocument *filter);
+    JsonDocument *jsonGET(String url, JsonDocument *filter = nullptr, bool https = false);
 }
 #endif

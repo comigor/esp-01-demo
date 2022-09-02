@@ -18,7 +18,6 @@
 Adafruit_SSD1306 *display = nullptr;
 String ip;
 bool booting = true;
-String stockPrice = "?.??";
 
 void setupClock()
 {
@@ -39,7 +38,7 @@ void setup()
 {
 #ifdef DEBUG
     Serial.begin(9600); //, SERIAL_8N1, SERIAL_TX_ONLY);
-    tdln("");
+    tdln("", false);
 #else
     tdln(":: Beep for fun");
     pinMode(GPIO1_TX, OUTPUT);
@@ -87,27 +86,81 @@ void drawNubankLogo(Adafruit_SSD1306 *display, int16_t x, int16_t y)
     display->drawBitmap(x, y, NUBANK_LOGO, LOGO_WIDTH, LOGO_HEIGHT, SSD1306_WHITE);
 }
 
-void updateStockPrice()
+JsonArray getPrices()
 {
-    StaticJsonDocument<80> filter;
-    filter["chart"]["result"][0]["meta"]["regularMarketPrice"] = true;
+    JsonDocument *resp = jsonGET("http://192.168.10.20:10000/profile");
+    return (*resp)["chart"].as<JsonArray>();
+}
 
-    JsonDocument *resp = jsonGET("https://query1.finance.yahoo.com/v8/finance/chart/NU?range=1d&interval=1d", &filter);
-
-    String newStockPrice = (*resp)["chart"]["result"][0]["meta"]["regularMarketPrice"];
-    td("Stock: ");
-    tdln(newStockPrice, false);
-
-    if (newStockPrice != "null")
+void updateStockPrice(JsonArray *prices, int16_t x, int16_t y)
+{
+    double lastPrice = -1;
+    for (JsonVariant price : *prices)
     {
-        double dd = newStockPrice.toDouble();
+        lastPrice = price.as<double>();
+    }
 
+    display->setCursor(x, y);
+    display->setTextSize(2);
+    display->setTextColor(SSD1306_WHITE);
+    if (lastPrice > 0)
+    {
         char buf[10] = {0};
-        sprintf(buf, "%0.3f", dd);
+        sprintf(buf, "%0.3f", lastPrice);
 #pragma GCC diagnostic ignored "-Wrestrict"
         sprintf(buf, "%5.5s", buf);
 
-        stockPrice = buf;
+        td("Stock: ");
+        tdln(buf, false);
+
+        display->print("$");
+        display->print(buf);
+    }
+    else
+    {
+        td("Stock: ");
+        tdln("error", false);
+
+        display->print("$?.???");
+    }
+}
+
+void drawSparkline(Adafruit_SSD1306 *display, JsonArray *prices, int16_t startX = 0, int16_t startY = 0, int16_t maxWidth = SCREEN_WIDTH, int16_t maxHeight = SCREEN_HEIGHT)
+{
+    std::vector<double> data;
+    double lastPrice = -1;
+    double minPrice = 99999, maxPrice = -1;
+    int count = 0;
+
+    for (JsonVariant price : *prices)
+    {
+        lastPrice = price.as<double>();
+        // to remove "null"s that sometimes appear
+        if (lastPrice)
+        {
+            if (lastPrice > maxPrice)
+                maxPrice = lastPrice;
+            if (lastPrice < minPrice)
+                minPrice = lastPrice;
+            ++count;
+            data.push_back(lastPrice);
+        }
+    }
+
+    double diff = maxPrice - minPrice;
+    double step = maxWidth / (count * 1.0);
+
+    // normalize and draw
+    int index = 0;
+    double lastY = 0;
+    for (auto it = data.begin(); it != data.end(); ++it)
+    {
+        *it = (*it - minPrice) / diff;
+        if (index > 0)
+            display->drawLine(startX + (index - 1) * step, startY + maxHeight - lastY * maxHeight, startX + index * step, startY + maxHeight - (*it) * maxHeight, SSD1306_WHITE);
+
+        lastY = *it;
+        ++index;
     }
 }
 
@@ -125,24 +178,23 @@ void loop()
     tdln("Drawing borders");
     display->drawRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, SSD1306_WHITE);
 
-    tdln("Drawing Nubank logo");
-    drawNubankLogo(display, 6, 12);
-
     tdln("Re-starting WiFi");
     ip = setupWifi();
 
-    tdln("Updating stock price");
-    updateStockPrice();
+    tdln("Retrieving stock prices");
+    JsonArray prices = getPrices();
 
     tdln("Sleeping WiFi");
     sleepWifi();
 
-    tdln("Drawing amount");
-    display->setCursor(52, 2 * 8);
-    display->setTextSize(2);
-    display->setTextColor(SSD1306_WHITE);
-    display->print("$");
-    display->print(stockPrice);
+    tdln("Drawing Nubank logo");
+    drawNubankLogo(display, 6, 6);
+
+    tdln("Drawing stock price");
+    updateStockPrice(&prices, 52, 10);
+
+    tdln("Drawing sparline");
+    drawSparkline(display, &prices, 6, 35, SCREEN_WIDTH - 12, 12);
 
     tdln("Drawing bottom bar");
     drawBottomBar(display, ip);
@@ -156,5 +208,5 @@ void loop()
     tdln("Sleeping for 120s");
     delay(120000);
 
-    tdln("");
+    tdln("", false);
 }
